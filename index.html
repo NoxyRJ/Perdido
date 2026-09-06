@@ -519,18 +519,29 @@
     display:inline-block;
     position:relative;
     background: transparent;
+    opacity:0;
+    transform: scale(0) rotate(-30deg);
+    transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .dot.show{
+    opacity:1;
+    transform: scale(1) rotate(0deg);
   }
   .dot::before{
     content:"♥";
     font-size:11px;
     line-height:1;
     color: rgba(255,255,255,0.22);
-    transition: color .3s ease, transform .3s ease;
+    transition: color .4s ease, transform .4s ease;
   }
   .dot.on::before{
     color: var(--pink);
     text-shadow: 0 0 8px rgba(255,111,160,0.7);
     transform: scale(1.15);
+  }
+  .dot.on{
+    opacity:1;
+    transform: scale(1) rotate(0deg);
   }
 
   @media (max-width:420px){
@@ -781,7 +792,10 @@
 <!-- TELA 1 -->
 <div class="stage screen" id="screen-1">
   <div class="progress-dots">
-    <div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot show on"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
   </div>
   <div class="eyebrow-line"><span></span><p>uma pergunta que eu guardei com carinho</p><span class="right"></span></div>
   <div class="heart-mark">💗</div>
@@ -796,7 +810,10 @@
 <!-- TELA 2 -->
 <div class="stage screen" id="screen-2">
   <div class="progress-dots">
-    <div class="dot on"></div><div class="dot on"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot show on"></div>
+    <div class="dot show on"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
   </div>
   <div class="eyebrow-line"><span></span><p>respira fundo</p><span class="right"></span></div>
   <div class="heart-mark">💫</div>
@@ -811,7 +828,10 @@
 <!-- TELA 3 -->
 <div class="stage screen" id="screen-3">
   <div class="progress-dots">
-    <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot"></div>
+    <div class="dot show on"></div>
+    <div class="dot show on"></div>
+    <div class="dot show on"></div>
+    <div class="dot"></div>
   </div>
   <div class="eyebrow-line"><span></span><p>a última, eu prometo</p><span class="right"></span></div>
   <div class="heart-mark">✨</div>
@@ -826,7 +846,10 @@
 <!-- TELA FINAL -->
 <div class="stage screen final" id="screen-4">
   <div class="progress-dots">
-    <div class="dot on"></div><div class="dot on"></div><div class="dot on"></div><div class="dot on"></div>
+    <div class="dot show on"></div>
+    <div class="dot show on"></div>
+    <div class="dot show on"></div>
+    <div class="dot show on"></div>
   </div>
   <div class="heart-mark">💗💙</div>
   <h1>então tá combinado, meu amor</h1>
@@ -864,6 +887,20 @@
 
   // ===== CONFIGURA O VOLUME EM 50% =====
   audio.volume = 0.5;
+
+  // ===== FUNÇÃO PARA ANIMAR OS PONTOS QUANDO A TELA MUDA =====
+  function animateDots(screenId) {
+    const screen = document.getElementById(screenId);
+    if (!screen) return;
+    const dots = screen.querySelectorAll('.dot');
+    dots.forEach((dot, index) => {
+      // Reseta a animação removendo e adicionando a classe
+      dot.classList.remove('show');
+      setTimeout(() => {
+        dot.classList.add('show');
+      }, 80 + (index * 120)); // Cada ponto aparece com um delay progressivo
+    });
+  }
 
   const starsWrap = document.getElementById('stars');
   for(let i=0;i<70;i++){
@@ -1016,7 +1053,6 @@
     musicStarted = true;
     musicControls.classList.add('visible');
     
-    // Volume já está definido como 0.5 (50%)
     audio.play()
       .then(() => {
         musicBtn.classList.remove('paused');
@@ -1089,13 +1125,18 @@
   makeNoDodge('no-2','row-2');
   makeNoDodge('no-3','row-3');
 
+  // ===== NAVEGAÇÃO COM ANIMAÇÃO DOS PONTOS =====
   function goTo(n){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById('screen-'+n).classList.add('active');
+    const targetScreen = document.getElementById('screen-'+n);
+    targetScreen.classList.add('active');
 
     document.querySelectorAll('.btn-no[data-screen]').forEach(b=>{
       b.style.display = (b.dataset.screen === String(n)) ? '' : 'none';
     });
+
+    // Anima os pontos da tela atual
+    animateDots('screen-'+n);
 
     if(n===4){
       console.log('🎵 Chegou na tela final! Iniciando música...');
@@ -1103,6 +1144,14 @@
       celebrate();
     }
   }
+
+  // Anima os pontos da tela inicial (tela 1) ao carregar
+  window.addEventListener('load', () => {
+    audio.load();
+    console.log('🎵 Áudio carregado! (Volume definido para 50%)');
+    // Anima os pontos da primeira tela após um pequeno delay
+    setTimeout(() => animateDots('screen-1'), 400);
+  });
 
   function celebrate(){
     const wrap = document.getElementById('floatHearts');
@@ -1121,11 +1170,6 @@
       }, i*140);
     }
   }
-
-  window.addEventListener('load', () => {
-    audio.load();
-    console.log('🎵 Áudio carregado! (Volume definido para 50%)');
-  });
 </script>
 
 </body>
