@@ -86,17 +86,17 @@
     height: var(--size, 2px);
     background: #ffffff;
     border-radius:50%;
-    opacity:0.15;
     box-shadow: 0 0 6px 1px rgba(255,255,255,0.6);
     animation:
       twinkle var(--tw-dur, 3s) ease-in-out infinite,
-      star-drift var(--dr-dur, 12s) ease-in-out infinite;
+      star-fall var(--fall-dur, 12s) linear infinite;
   }
   @keyframes twinkle{ 0%,100%{opacity:.1;} 50%{opacity:.95;} }
-  @keyframes star-drift{
-    0%{ transform: translateY(0) translateX(0); }
-    50%{ transform: translateY(20vh) translateX(var(--dx, 14px)); }
-    100%{ transform: translateY(0) translateX(0); }
+  @keyframes star-fall{
+    0%{ transform: translateY(0) translateX(0); opacity: 0.2; }
+    10%{ opacity: 0.9; }
+    90%{ opacity: 0.7; }
+    100%{ transform: translateY(110vh) translateX(var(--dx, 20px)); opacity: 0; }
   }
 
   .petals{
@@ -718,27 +718,27 @@
   /* ====== ESTILO DA NEVE DE BOLINHAS BRANCAS E ROSAS ====== */
   .neve-bolinha {
     position: fixed;
-    top: -20px; /* Começa fora da tela */
+    top: -10px;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999; /* Fica por cima de tudo */
     opacity: 0;
   }
 
-  /* Animação só de cair para baixo */
+  /* Animação de queda */
   @keyframes cairNeve {
     0% { 
       transform: translateY(0) translateX(0);
       opacity: 0; 
     }
-    5% { opacity: 1; } /* Aparece rápido */
+    5% { opacity: 1; } /* Aparece rapidinho */
     100% { 
       transform: translateY(110vh) translateX(30px); 
       opacity: 0.8; 
     }
   }
 
-  /* Animação de piscar */
+  /* Animação de piscar (independente da queda) */
   @keyframes piscarBolinha {
     0%, 100% { filter: brightness(1); }
     50% { filter: brightness(1.8); }
@@ -946,10 +946,8 @@
   const audio = document.getElementById('audioPlayer');
   let musicStarted = false;
 
-  // ===== CONFIGURA O VOLUME EM 50% =====
   audio.volume = 0.5;
 
-  // ===== FUNÇÃO PARA ANIMAR OS PONTOS COM EFEITO CASCATA =====
   function animateDots(screenId) {
     const screen = document.getElementById(screenId);
     if (!screen) return;
@@ -976,13 +974,13 @@
   for(let i=0;i<50;i++){
     const s = document.createElement('div');
     s.className='star';
-    s.style.top = (Math.random()*100)+'vh'; // Espalha as estrelas por toda a tela
+    s.style.top = -Math.random()*20+'vh'; /* Começa acima da tela */
     s.style.left = Math.random()*100+'vw';
     s.style.setProperty('--size', (1 + Math.random()*2).toFixed(1)+'px');
     s.style.setProperty('--tw-dur', (2 + Math.random()*3).toFixed(1)+'s');
-    s.style.setProperty('--dr-dur', (4 + Math.random()*5).toFixed(1)+'s');
+    s.style.setProperty('--fall-dur', (10 + Math.random()*10).toFixed(1)+'s'); /* Cai bem devagar */
     s.style.setProperty('--dx', (Math.random()*60 - 30).toFixed(0)+'px');
-    s.style.animationDelay = (Math.random()*4)+'s, '+(Math.random()*6)+'s';
+    s.style.animationDelay = (Math.random()*10)+'s, '+(Math.random()*10)+'s';
     starsWrap.appendChild(s);
   }
 
@@ -1152,7 +1150,7 @@
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
 
-  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS (CORRIGIDO PARA CAIR PELA TELA TODA) =====
+  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS (AGORA CAINDO PELA TELA TODA) =====
   const coresNeve = ['#ffffff', '#ffb6c1']; // Branco e Rosa claro
   
   function criarBolinhaNeve() {
@@ -1165,12 +1163,12 @@
       
       bolinha.style.backgroundColor = coresNeve[Math.floor(Math.random() * coresNeve.length)];
       
+      // Distribui as bolinhas entre -10% e 50% da altura da tela para preencher rápido
+      bolinha.style.top = (-Math.random() * 50) + 'vh'; 
       bolinha.style.left = Math.random() * 100 + 'vw';
       
-      // Duração da queda (4 a 10 segundos)
       const duracao = (Math.random() * 6 + 4) + 's';
       
-      // APLICANDO AS ANIMAÇÕES SEPARADAS
       bolinha.style.animation = `cairNeve ${duracao} linear forwards, piscarBolinha 0.8s ease-in-out infinite`;
 
       document.body.appendChild(bolinha);
@@ -1196,7 +1194,6 @@
   makeNoDodge('no-2','row-2');
   makeNoDodge('no-3','row-3');
 
-  // ===== NAVEGAÇÃO COM ANIMAÇÃO DOS PONTOS =====
   function goTo(n){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     const targetScreen = document.getElementById('screen-'+n);
