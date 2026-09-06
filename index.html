@@ -31,7 +31,7 @@
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='28' viewBox='0 0 60 56'%3E%3Cellipse cx='16' cy='18' rx='7' ry='15' fill='%23ffffff' stroke='%23e7c9d6' stroke-width='1.2' transform='rotate(-16 16 18)'/%3E%3Cellipse cx='40' cy='18' rx='7' ry='15' fill='%23ffffff' stroke='%23e7c9d6' stroke-width='1.2' transform='rotate(16 40 18)'/%3E%3Ccircle cx='28' cy='32' r='19' fill='%23ffffff' stroke='%23e7c9d6' stroke-width='1.2'/%3E%3Cellipse cx='19' cy='35' rx='3.2' ry='4' fill='%23ffc4dc' opacity='0.85'/%3E%3Cellipse cx='37' cy='35' rx='3.2' ry='4' fill='%23bcd8ff' opacity='0.85'/%3E%3Ccircle cx='21' cy='29' r='1.7' fill='%233d3542'/%3E%3Ccircle cx='35' cy='29' r='1.7' fill='%233d3542'/%3E%3Cpath d='M25 36 Q28 39 31 36' stroke='%233d3542' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") 15 14, auto;
   }
 
-  a, button, .btn-yes, .btn-no, .music-btn{
+  a, button, .btn-yes, .btn-no{
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='32' viewBox='0 0 60 56'%3E%3Cellipse cx='16' cy='18' rx='7' ry='15' fill='%23fff6fa' stroke='%23ff6fa0' stroke-width='1.6' transform='rotate(-16 16 18)'/%3E%3Cellipse cx='40' cy='18' rx='7' ry='15' fill='%23fff6fa' stroke='%23ff6fa0' stroke-width='1.6' transform='rotate(16 40 18)'/%3E%3Ccircle cx='28' cy='32' r='19' fill='%23fff6fa' stroke='%23ff6fa0' stroke-width='1.6'/%3E%3Cellipse cx='19' cy='35' rx='3.2' ry='4' fill='%23ff8fb8' opacity='0.9'/%3E%3Cellipse cx='37' cy='35' rx='3.2' ry='4' fill='%235aa4ff' opacity='0.7'/%3E%3Ccircle cx='21' cy='29' r='1.7' fill='%233d3542'/%3E%3Ccircle cx='35' cy='29' r='1.7' fill='%233d3542'/%3E%3Cpath d='M25 36 Q28 39 31 36' stroke='%233d3542' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") 15 14, pointer;
   }
 
@@ -606,7 +606,6 @@
   .dot:nth-child(3) { transition-delay: 0.2s; }
   .dot:nth-child(4) { transition-delay: 0.3s; }
 
-  /* Efeito de brilho ao redor do ponto ativo */
   .dot.on::after {
     content: "";
     position: absolute;
@@ -640,62 +639,6 @@
 
   @media (prefers-reduced-motion: reduce){
     *{ animation: none !important; transition: none !important; }
-  }
-
-  .top-btns{
-    position:fixed;
-    top:22px;
-    right:22px;
-    z-index:60;
-    display:flex;
-    gap:10px;
-    opacity:0;
-    pointer-events:none;
-    transition: opacity 0.5s ease;
-  }
-  .top-btns.visible{
-    opacity:1;
-    pointer-events:auto;
-  }
-
-  .music-btn{
-    position:relative;
-    top:auto; right:auto;
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,0.16);
-    background: rgba(20,17,28,0.6);
-    backdrop-filter: blur(10px);
-    color: var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:1.1rem;
-    cursor:pointer;
-    padding:0;
-    transition: transform .18s ease, background .2s ease;
-  }
-  .music-btn:hover{ transform: scale(1.06); background: rgba(255,111,160,0.18); }
-  .music-btn .bar{
-    display:inline-flex;
-    gap:2px;
-    align-items:flex-end;
-    height:14px;
-  }
-  .music-btn .bar span{
-    width:3px;
-    background: linear-gradient(180deg, var(--pink-soft), var(--blue-soft));
-    border-radius:2px;
-    animation: eq 0.9s ease-in-out infinite;
-  }
-  .music-btn.paused .bar span{ animation-play-state: paused; height:4px !important; }
-  .bar span:nth-child(1){ animation-delay: 0s; }
-  .bar span:nth-child(2){ animation-delay: .2s; }
-  .bar span:nth-child(3){ animation-delay: .4s; }
-  @keyframes eq{
-    0%,100%{ height:4px; }
-    50%{ height:14px; }
   }
 
   .final-message {
@@ -770,6 +713,31 @@
     opacity: 0;
     pointer-events: none;
   }
+
+  /* ====== ESTILO DA NEVE DE BOLINHAS BRANCAS E ROSAS ====== */
+  .neve-bolinha {
+    position: fixed;
+    top: -10px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  @keyframes cairNeve {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) translateX(30px);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes piscarBolinha {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.4; filter: brightness(1.6); }
+  }
 </style>
 </head>
 <body>
@@ -827,17 +795,11 @@
   </svg>
 </div>
 
-<!-- ÁUDIO HOSPEDADO NO GITHUB - VOLUME 50% -->
+<!-- ÁUDIO HOSPEDADO NO GITHUB - TOCA AUTOMATICAMENTE NA TELA FINAL -->
 <audio id="audioPlayer" preload="auto" loop>
   <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/You%20Are%20My%20Destiny.mp4" type="audio/mp4">
   Seu navegador não suporta áudio.
 </audio>
-
-<div class="top-btns" id="musicControls">
-  <button class="music-btn paused" id="musicBtn" title="tocar música" aria-label="tocar ou pausar música">
-    <span class="bar"><span></span><span></span><span></span></span>
-  </button>
-</div>
 
 <!-- ===== FOOTER SIGN MAIOR E MAIS DESTACADO ===== -->
 <div class="footer-sign">
@@ -1148,52 +1110,23 @@
     }, {passive:false});
   }
 
-  const musicBtn = document.getElementById('musicBtn');
-  const musicControls = document.getElementById('musicControls');
-
   function startMusic() {
     if (musicStarted) return;
     musicStarted = true;
-    musicControls.classList.add('visible');
     
     audio.play()
       .then(() => {
-        musicBtn.classList.remove('paused');
         console.log('🎵 Música iniciada! (Volume: 50%)');
       })
       .catch((err) => {
         console.warn('Erro ao tocar automaticamente:', err);
         document.addEventListener('click', function playOnClick() {
           audio.play().then(() => {
-            musicBtn.classList.remove('paused');
             document.removeEventListener('click', playOnClick);
           }).catch(() => {});
         }, { once: true });
       });
   }
-
-  function toggleMusic() {
-    if (!musicStarted) return;
-    if (audio.paused) {
-      audio.play().then(() => musicBtn.classList.remove('paused'));
-    } else {
-      audio.pause();
-      musicBtn.classList.add('paused');
-    }
-  }
-
-  musicBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleMusic();
-  });
-
-  audio.addEventListener('pause', () => musicBtn.classList.add('paused'));
-  audio.addEventListener('play', () => musicBtn.classList.remove('paused'));
-  audio.addEventListener('ended', () => {
-    if (audio.loop) {
-      audio.play().catch(() => {});
-    }
-  });
 
   const petalsWrap = document.getElementById('petals');
   const petalColors = ['#ff6fa0', '#5aa4ff', '#c98cff', '#ffb3cd', '#a9cbff'];
@@ -1214,6 +1147,37 @@
   }
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
+
+  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS PISCANDO =====
+  const coresNeve = ['#ffffff', '#ffb6c1']; // Branco e Rosa claro
+  function criarBolinhaNeve() {
+      const bolinha = document.createElement('div');
+      bolinha.classList.add('neve-bolinha');
+      
+      const tamanho = Math.random() * 8 + 4;
+      bolinha.style.width = tamanho + 'px';
+      bolinha.style.height = tamanho + 'px';
+      
+      bolinha.style.backgroundColor = coresNeve[Math.floor(Math.random() * coresNeve.length)];
+      
+      bolinha.style.left = Math.random() * 100 + 'vw';
+      
+      // Duração da queda (4 a 10 segundos)
+      bolinha.style.animationDuration = (Math.random() * 6 + 4) + 's';
+      
+      // Aplicar as animações de cair e piscar
+      bolinha.style.animationName = 'cairNeve, piscarBolinha';
+      bolinha.style.animationIterationCount = 'infinite, infinite';
+
+      document.body.appendChild(bolinha);
+
+      // Remover após cair para não acumular
+      setTimeout(() => {
+          bolinha.remove();
+      }, 10000);
+  }
+  // Criar bolinhas a cada 100 milissegundos (pode ajustar: 300 = mais devagar)
+  setInterval(criarBolinhaNeve, 100);
 
   document.getElementById('screen-0').addEventListener('click', function(){
     const env = document.getElementById('envelope');
