@@ -597,7 +597,6 @@
     50%{ height:14px; }
   }
 
-  /* ===== MENSAGEM FINAL SUPER DESTACADA ===== */
   .final-message {
     font-family: 'Fraunces', serif;
     font-weight: 700;
@@ -661,7 +660,6 @@
     display: inline-block;
   }
 
-  /* Player de áudio oculto */
   #audioPlayer {
     position: fixed;
     bottom: -100px;
@@ -728,19 +726,12 @@
   </svg>
 </div>
 
-<!-- ÁUDIO HOSPEDADO NO GITHUB -->
+<!-- ÁUDIO HOSPEDADO NO GITHUB - LINK CORRETO -->
 <audio id="audioPlayer" preload="auto" loop>
-  <!-- 
-    🔽 SUBSTITUA OS LINKS ABAIXO PELOS SEUS LINKS DO GITHUB 🔽
-    Depois de fazer upload, clique no arquivo no GitHub e depois em "Raw"
-    Copie a URL e cole abaixo
-  -->
-  <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/musica.mp4" type="audio/mp4">
-  <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/musica.mp3" type="audio/mpeg">
+  <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/You%20Are%20My%20Destiny.mp4" type="audio/mp4">
   Seu navegador não suporta áudio.
 </audio>
 
-<!-- CONTROLES DA MÚSICA -->
 <div class="top-btns" id="musicControls">
   <button class="music-btn paused" id="musicBtn" title="tocar música" aria-label="tocar ou pausar música">
     <span class="bar"><span></span><span></span><span></span></span>
@@ -842,7 +833,6 @@
   <p class="sub">obrigado por dizer sim. prometo estar presente nos dias simples e nos especiais, cuidar de cada detalhe nosso e fazer valer a pena todo carinho que a gente tem.</p>
   <p class="sub" style="margin-top:-18px; color:var(--ink);">que bom ter você do meu lado, agora e para sempre. 💫</p>
   
-  <!-- MENSAGEM SUPER DESTACADA -->
   <div class="final-message">
     <span class="highlight-text">💗 Estou feliz em namorar uma pessoa incrível igual a você, Eu te amo. 💗</span>
   </div>
@@ -869,13 +859,9 @@
 </div>
 
 <script>
-
-  // ===== CONFIGURAÇÃO DO ÁUDIO =====
-  // O áudio será carregado do elemento <audio> acima
   const audio = document.getElementById('audioPlayer');
   let musicStarted = false;
 
-  // ===== ESTRELAS DE FUNDO =====
   const starsWrap = document.getElementById('stars');
   for(let i=0;i<70;i++){
     const s = document.createElement('div');
@@ -1019,7 +1005,6 @@
     }, {passive:false});
   }
 
-  // ===== CONTROLE DA MÚSICA =====
   const musicBtn = document.getElementById('musicBtn');
   const musicControls = document.getElementById('musicControls');
 
@@ -1029,7 +1014,6 @@
     musicControls.classList.add('visible');
     audio.volume = 0.6;
     
-    // Tenta tocar a música
     audio.play()
       .then(() => {
         musicBtn.classList.remove('paused');
@@ -1037,7 +1021,6 @@
       })
       .catch((err) => {
         console.warn('Erro ao tocar automaticamente:', err);
-        // Tenta novamente quando o usuário clicar
         document.addEventListener('click', function playOnClick() {
           audio.play().then(() => {
             musicBtn.classList.remove('paused');
@@ -1062,7 +1045,6 @@
     toggleMusic();
   });
 
-  // Atualiza o ícone do botão
   audio.addEventListener('pause', () => musicBtn.classList.add('paused'));
   audio.addEventListener('play', () => musicBtn.classList.remove('paused'));
   audio.addEventListener('ended', () => {
@@ -1071,7 +1053,6 @@
     }
   });
 
-  // ===== PÉTALAS =====
   const petalsWrap = document.getElementById('petals');
   const petalColors = ['#ff6fa0', '#5aa4ff', '#c98cff', '#ffb3cd', '#a9cbff'];
   function spawnPetal(){
@@ -1092,7 +1073,6 @@
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
 
-  // ===== ENVELOPE =====
   document.getElementById('screen-0').addEventListener('click', function(){
     const env = document.getElementById('envelope');
     const cover = document.getElementById('screen-0');
@@ -1106,7 +1086,6 @@
   makeNoDodge('no-2','row-2');
   makeNoDodge('no-3','row-3');
 
-  // ===== NAVEGAÇÃO =====
   function goTo(n){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     document.getElementById('screen-'+n).classList.add('active');
@@ -1140,7 +1119,6 @@
     }
   }
 
-  // Pré-carrega o áudio
   window.addEventListener('load', () => {
     audio.load();
     console.log('🎵 Áudio carregado!');
