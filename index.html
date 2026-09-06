@@ -81,6 +81,7 @@
   }
   .star{
     position:absolute;
+    top: -10px;
     width: var(--size, 2px);
     height: var(--size, 2px);
     background: #ffffff;
@@ -89,13 +90,13 @@
     box-shadow: 0 0 6px 1px rgba(255,255,255,0.6);
     animation:
       twinkle var(--tw-dur, 3s) ease-in-out infinite,
-      drift var(--dr-dur, 12s) ease-in-out infinite;
+      star-drift var(--dr-dur, 12s) ease-in-out infinite;
   }
   @keyframes twinkle{ 0%,100%{opacity:.1;} 50%{opacity:.95;} }
-  @keyframes drift{
-    0%{ transform: translate(0,0); }
-    50%{ transform: translate(var(--dx, 14px), var(--dy, -18px)); }
-    100%{ transform: translate(0,0); }
+  @keyframes star-drift{
+    0%{ transform: translateY(0) translateX(0); }
+    50%{ transform: translateY(20vh) translateX(var(--dx, 14px)); }
+    100%{ transform: translateY(0) translateX(0); }
   }
 
   .petals{
@@ -717,26 +718,30 @@
   /* ====== ESTILO DA NEVE DE BOLINHAS BRANCAS E ROSAS ====== */
   .neve-bolinha {
     position: fixed;
-    top: -10px;
+    top: -20px; /* Começa fora da tela */
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999; /* Fica por cima de tudo */
+    opacity: 0;
   }
 
+  /* Animação só de cair para baixo */
   @keyframes cairNeve {
-    0% {
+    0% { 
       transform: translateY(0) translateX(0);
-      opacity: 1;
+      opacity: 0; 
     }
-    100% {
-      transform: translateY(100vh) translateX(30px);
-      opacity: 0.7;
+    5% { opacity: 1; } /* Aparece rápido */
+    100% { 
+      transform: translateY(110vh) translateX(30px); 
+      opacity: 0.8; 
     }
   }
 
+  /* Animação de piscar */
   @keyframes piscarBolinha {
-    0%, 100% { opacity: 1; filter: brightness(1); }
-    50% { opacity: 0.4; filter: brightness(1.6); }
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.8); }
   }
 </style>
 </head>
@@ -968,16 +973,15 @@
   }
 
   const starsWrap = document.getElementById('stars');
-  for(let i=0;i<70;i++){
+  for(let i=0;i<50;i++){
     const s = document.createElement('div');
     s.className='star';
-    s.style.top = Math.random()*100+'vh';
+    s.style.top = (Math.random()*100)+'vh'; // Espalha as estrelas por toda a tela
     s.style.left = Math.random()*100+'vw';
     s.style.setProperty('--size', (1 + Math.random()*2).toFixed(1)+'px');
     s.style.setProperty('--tw-dur', (2 + Math.random()*3).toFixed(1)+'s');
     s.style.setProperty('--dr-dur', (4 + Math.random()*5).toFixed(1)+'s');
     s.style.setProperty('--dx', (Math.random()*60 - 30).toFixed(0)+'px');
-    s.style.setProperty('--dy', (Math.random()*60 - 30).toFixed(0)+'px');
     s.style.animationDelay = (Math.random()*4)+'s, '+(Math.random()*6)+'s';
     starsWrap.appendChild(s);
   }
@@ -1148,40 +1152,35 @@
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
 
-  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS PISCANDO (CAINDO PELA TELA TODA) =====
+  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS (CORRIGIDO PARA CAIR PELA TELA TODA) =====
   const coresNeve = ['#ffffff', '#ffb6c1']; // Branco e Rosa claro
   
   function criarBolinhaNeve() {
       const bolinha = document.createElement('div');
       bolinha.classList.add('neve-bolinha');
       
-      // Tamanho aleatório (4 a 12 px)
       const tamanho = Math.random() * 8 + 4;
       bolinha.style.width = tamanho + 'px';
       bolinha.style.height = tamanho + 'px';
       
-      // Cor aleatória (branca ou rosa)
       bolinha.style.backgroundColor = coresNeve[Math.floor(Math.random() * coresNeve.length)];
       
-      // Posição horizontal aleatória (cobre a tela toda)
       bolinha.style.left = Math.random() * 100 + 'vw';
       
       // Duração da queda (4 a 10 segundos)
-      bolinha.style.animationDuration = (Math.random() * 6 + 4) + 's';
+      const duracao = (Math.random() * 6 + 4) + 's';
       
-      // Aplicar as animações de cair e piscar (infinitamente)
-      bolinha.style.animationName = 'cairNeve, piscarBolinha';
-      bolinha.style.animationIterationCount = 'infinite, infinite';
+      // APLICANDO AS ANIMAÇÕES SEPARADAS
+      bolinha.style.animation = `cairNeve ${duracao} linear forwards, piscarBolinha 0.8s ease-in-out infinite`;
 
       document.body.appendChild(bolinha);
 
-      // Remover após cair para não acumular no navegador
       setTimeout(() => {
           bolinha.remove();
       }, 10000);
   }
   
-  // Cria bolinhas o tempo todo (a cada 100ms = bem cheio. Aumente para 300 se quiser mais devagar)
+  // Cria bolinhas a cada 100 milissegundos
   setInterval(criarBolinhaNeve, 100);
 
   document.getElementById('screen-0').addEventListener('click', function(){
