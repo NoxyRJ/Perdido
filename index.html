@@ -720,7 +720,7 @@
     top: -10px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 9999; /* Fica por cima de tudo */
   }
 
   @keyframes cairNeve {
@@ -1148,35 +1148,40 @@
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
 
-  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS PISCANDO =====
+  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS PISCANDO (CAINDO PELA TELA TODA) =====
   const coresNeve = ['#ffffff', '#ffb6c1']; // Branco e Rosa claro
+  
   function criarBolinhaNeve() {
       const bolinha = document.createElement('div');
       bolinha.classList.add('neve-bolinha');
       
+      // Tamanho aleatório (4 a 12 px)
       const tamanho = Math.random() * 8 + 4;
       bolinha.style.width = tamanho + 'px';
       bolinha.style.height = tamanho + 'px';
       
+      // Cor aleatória (branca ou rosa)
       bolinha.style.backgroundColor = coresNeve[Math.floor(Math.random() * coresNeve.length)];
       
+      // Posição horizontal aleatória (cobre a tela toda)
       bolinha.style.left = Math.random() * 100 + 'vw';
       
       // Duração da queda (4 a 10 segundos)
       bolinha.style.animationDuration = (Math.random() * 6 + 4) + 's';
       
-      // Aplicar as animações de cair e piscar
+      // Aplicar as animações de cair e piscar (infinitamente)
       bolinha.style.animationName = 'cairNeve, piscarBolinha';
       bolinha.style.animationIterationCount = 'infinite, infinite';
 
       document.body.appendChild(bolinha);
 
-      // Remover após cair para não acumular
+      // Remover após cair para não acumular no navegador
       setTimeout(() => {
           bolinha.remove();
       }, 10000);
   }
-  // Criar bolinhas a cada 100 milissegundos (pode ajustar: 300 = mais devagar)
+  
+  // Cria bolinhas o tempo todo (a cada 100ms = bem cheio. Aumente para 300 se quiser mais devagar)
   setInterval(criarBolinhaNeve, 100);
 
   document.getElementById('screen-0').addEventListener('click', function(){
