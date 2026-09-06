@@ -746,9 +746,13 @@
   .cair-coracao {
     position: fixed;
     top: -60px;
+    border-radius: 0;
     pointer-events: none;
     z-index: 9998;
-    animation: cairCoracoes linear forwards;
+    opacity: 0;
+    animation-name: cairCoracoes;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
     text-shadow: 0 0 20px rgba(255,111,160,0.8);
   }
 
@@ -1132,7 +1136,7 @@
     }, {passive:false});
   }
 
-  // ===== CHUVA DE CORAÇÕES COMO PARTÍCULAS (ATIVADA IMEDIATAMENTE) =====
+  // ===== CHUVA DE CORAÇÕES COMO PARTÍCULAS (CORRIGIDO PARA CAIR DE VERDADE) =====
   function criarCoracao() {
     const coracao = document.createElement('div');
     coracao.className = 'cair-coracao';
@@ -1141,6 +1145,9 @@
     coracao.textContent = emojis[Math.floor(Math.random() * emojis.length)];
     
     coracao.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+    
+    // Espalha os corações pela tela, evitando que fiquem presos no topo
+    coracao.style.top = (-Math.random() * 100) + 'vh'; 
     coracao.style.left = Math.random() * 100 + 'vw';
     
     coracao.style.setProperty('--coracao-sway', (Math.random() * 120 - 60).toFixed(0) + 'px');
@@ -1148,17 +1155,18 @@
     
     const duracao = (3 + Math.random() * 4) + 's';
     coracao.style.animationDuration = duracao;
+    coracao.style.animationDelay = (Math.random() * 2) + 's'; // Pequeno atraso para não sobrecarregar
 
     document.body.appendChild(coracao);
 
     setTimeout(() => {
       coracao.remove();
-    }, parseFloat(duracao) * 1000 + 200);
+    }, (parseFloat(duracao) + 2) * 1000);
   }
 
   function startCoracoes() {
     if (coracaoInterval) return; 
-    coracaoInterval = setInterval(criarCoracao, 250); // Bem rápido!
+    coracaoInterval = setInterval(criarCoracao, 200); // Bem rápido e espalhado
   }
 
   function startMusic() {
@@ -1252,8 +1260,7 @@
     setTimeout(() => animateDots('screen-'+n), 100);
 
     if(n===4){
-      // Ativa a chuva de corações IMEDIATAMENTE, sem depender da música
-      startCoracoes();
+      startCoracoes(); // Ativa a chuva de corações IMEDIATAMENTE
       startMusic();
       celebrate();
     }
