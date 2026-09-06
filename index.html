@@ -747,7 +747,7 @@
     position: fixed;
     top: -60px;
     pointer-events: none;
-    z-index: 9998; /* Fica atrás da neve mas na frente do fundo */
+    z-index: 9998;
     animation: cairCoracoes linear forwards;
     text-shadow: 0 0 20px rgba(255,111,160,0.8);
   }
@@ -819,7 +819,7 @@
   </svg>
 </div>
 
-<!-- ÁUDIO HOSPEDADO NO GITHUB - TOCA AUTOMATICAMENTE NA TELA FINAL -->
+<!-- ÁUDIO HOSPEDADO NO GITHUB -->
 <audio id="audioPlayer" preload="auto" loop>
   <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/You%20Are%20My%20Destiny.mp4" type="audio/mp4">
   Seu navegador não suporta áudio.
@@ -964,7 +964,7 @@
 <script>
   const audio = document.getElementById('audioPlayer');
   let musicStarted = false;
-  let coracaoInterval = null; // Guarda o intervalo da chuva de corações
+  let coracaoInterval = null;
 
   audio.volume = 0.5;
 
@@ -1132,7 +1132,7 @@
     }, {passive:false});
   }
 
-  // ===== CHUVA DE CORAÇÕES (ATIVADA QUANDO A MÚSICA COMEÇA) =====
+  // ===== CHUVA DE CORAÇÕES =====
   function criarCoracao() {
     const coracao = document.createElement('div');
     coracao.className = 'cair-coracao';
@@ -1140,17 +1140,13 @@
     const emojis = ['💗', '💙', '💜', '💖', '💕'];
     coracao.textContent = emojis[Math.floor(Math.random() * emojis.length)];
     
-    // Tamanho entre 1.5rem e 3.5rem
     coracao.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
     
-    // Posição inicial
     coracao.style.left = Math.random() * 100 + 'vw';
     
-    // Movimento lateral e rotação
     coracao.style.setProperty('--coracao-sway', (Math.random() * 120 - 60).toFixed(0) + 'px');
     coracao.style.setProperty('--coracao-rot', (Math.random() * 540 - 270).toFixed(0) + 'deg');
     
-    // Duração da queda (3 a 7 segundos)
     const duracao = (3 + Math.random() * 4) + 's';
     coracao.style.animationDuration = duracao;
 
@@ -1162,9 +1158,8 @@
   }
 
   function startCoracoes() {
-    if (coracaoInterval) return; // Evita iniciar duas vezes
-    // Cria 3 corações por segundo
-    coracaoInterval = setInterval(criarCoracao, 300);
+    if (coracaoInterval) return; 
+    coracaoInterval = setInterval(criarCoracao, 300); 
   }
 
   function startMusic() {
@@ -1174,14 +1169,14 @@
     audio.play()
       .then(() => {
         console.log('🎵 Música iniciada! (Volume: 50%)');
-        startCoracoes(); // Dispara a chuva de corações junto com a música
+        startCoracoes(); 
       })
       .catch((err) => {
-        console.warn('Erro ao tocar automaticamente:', err);
+        // Se o navegador bloquear, toca no próximo clique e ativa os corações
         document.addEventListener('click', function playOnClick() {
           audio.play().then(() => {
             document.removeEventListener('click', playOnClick);
-            startCoracoes(); // Dispara a chuva de corações junto com a música
+            startCoracoes(); 
           }).catch(() => {});
         }, { once: true });
       });
@@ -1207,7 +1202,7 @@
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
 
-  // ===== CRIAÇÃO DA NEVE DE BOLINHAS BRANCAS E ROSAS =====
+  // ===== NEVE DE BOLINHAS BRANCAS E ROSAS =====
   const coresNeve = ['#ffffff', '#ffb6c1'];
   
   function criarBolinhaNeve() {
@@ -1261,8 +1256,8 @@
     setTimeout(() => animateDots('screen-'+n), 100);
 
     if(n===4){
-      console.log('🎵 Chegou na tela final! Iniciando música e chuva de corações...');
-      setTimeout(startMusic, 300);
+      // Ativa a música imediatamente porque o usuário acabou de clicar no botão
+      startMusic();
       celebrate();
     }
   }
