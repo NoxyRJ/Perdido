@@ -726,7 +726,7 @@
   </svg>
 </div>
 
-<!-- ÁUDIO HOSPEDADO NO GITHUB - LINK CORRETO -->
+<!-- ÁUDIO HOSPEDADO NO GITHUB - VOLUME 50% -->
 <audio id="audioPlayer" preload="auto" loop>
   <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/You%20Are%20My%20Destiny.mp4" type="audio/mp4">
   Seu navegador não suporta áudio.
@@ -861,6 +861,9 @@
 <script>
   const audio = document.getElementById('audioPlayer');
   let musicStarted = false;
+
+  // ===== CONFIGURA O VOLUME EM 50% =====
+  audio.volume = 0.5;
 
   const starsWrap = document.getElementById('stars');
   for(let i=0;i<70;i++){
@@ -1012,12 +1015,12 @@
     if (musicStarted) return;
     musicStarted = true;
     musicControls.classList.add('visible');
-    audio.volume = 0.6;
     
+    // Volume já está definido como 0.5 (50%)
     audio.play()
       .then(() => {
         musicBtn.classList.remove('paused');
-        console.log('🎵 Música iniciada!');
+        console.log('🎵 Música iniciada! (Volume: 50%)');
       })
       .catch((err) => {
         console.warn('Erro ao tocar automaticamente:', err);
@@ -1121,7 +1124,7 @@
 
   window.addEventListener('load', () => {
     audio.load();
-    console.log('🎵 Áudio carregado!');
+    console.log('🎵 Áudio carregado! (Volume definido para 50%)');
   });
 </script>
 
