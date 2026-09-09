@@ -8,6 +8,24 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* ===== BLOQUEIO DE SELEÇÃO E CLIQUE DIREITO ===== */
+  * {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  /* Permite seleção apenas em inputs/textarea se houver (mas não temos) */
+  input, textarea {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+  }
+
   :root{
     --black: #08070c;
     --black-2: #0f0d16;
@@ -59,7 +77,6 @@
     100%{ filter:hue-rotate(8deg) brightness(1.08); }
   }
 
-  /* Pisca rosa <-> azul somente durante a chuva romântica da tela final. */
   .aura.final-color-pulse{
     animation: finalColorPulse 2.2s ease-in-out infinite alternate;
   }
@@ -243,7 +260,6 @@
     animation: buddy-bob 4.5s ease-in-out infinite;
   }
 
-  /* ===== FOOTER SIGN MAIOR E MAIS DESTACADO ===== */
   .footer-sign{
     position:fixed;
     bottom:20px;
@@ -572,7 +588,6 @@
     100%{ transform: translateY(-110vh) translateX(var(--drift,20px)) rotate(360deg); opacity:0;}
   }
 
-  /* ===== PROGRESS DOTS COM ANIMAÇÃO DAAORA ===== */
   .progress-dots{
     display:flex;
     justify-content:center;
@@ -732,7 +747,6 @@
     display: inline-block;
   }
 
-  /* ===== EFEITO ROMÂNTICO AO CONFIRMAR O ÚLTIMO "SIM" ===== */
   .btn-yes.last-yes {
     position: relative;
     overflow: visible;
@@ -785,7 +799,6 @@
     100% { transform: scale(1.55); opacity: 0; }
   }
 
-  /* Corações exclusivos da tela final: bem afastados e distribuídos ao redor do cartão. */
   .final-romantic-particle {
     position: fixed;
     pointer-events: none;
@@ -831,7 +844,6 @@
     pointer-events: none;
   }
 
-  /* ====== ESTILO DA NEVE DE BOLINHAS BRANCAS E ROSAS ====== */
   .neve-bolinha {
     position: fixed;
     top: -10px;
@@ -858,7 +870,6 @@
     50% { filter: brightness(1.8); }
   }
 
-  /* ====== ESTILO DA CHUVA DE CORAÇÕES (PARTÍCULAS) ====== */
   .cair-coracao {
     position: fixed;
     top: -60px;
@@ -885,6 +896,27 @@
 </style>
 </head>
 <body>
+
+<!-- ===== BLOQUEIO DE CLIQUE DIREITO ===== -->
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+  });
+
+  // Bloqueia também Ctrl+C, Ctrl+U, Ctrl+S, Ctrl+P, F12, etc.
+  document.addEventListener('keydown', function(e) {
+    // Ctrl+C, Ctrl+U, Ctrl+S, Ctrl+P, F12, Ctrl+Shift+I, Ctrl+Shift+J
+    if (
+      (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'p')) ||
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'j'))
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+</script>
 
 <div class="aura"></div>
 <div class="checker-wash"></div>
@@ -939,19 +971,16 @@
   </svg>
 </div>
 
-<!-- ÁUDIO HOSPEDADO NO GITHUB -->
 <audio id="audioPlayer" preload="auto" loop>
   <source src="https://raw.githubusercontent.com/NoxyRJ/Perdido/main/You%20Are%20My%20Destiny.mp4" type="audio/mp4">
   Seu navegador não suporta áudio.
 </audio>
 
-<!-- ===== FOOTER SIGN MAIOR E MAIS DESTACADO ===== -->
 <div class="footer-sign">
   feito com <span class="heart">💗</span> por <span class="name">Thiago</span> 
   <span class="to">para</span> <span class="target">Raquel</span>
 </div>
 
-<!-- TELA 0: CAPA / ENVELOPE -->
 <div class="stage screen active cover" id="screen-0">
   <div class="envelope-wrap" id="envelopeWrap">
     <div class="envelope" id="envelope">
@@ -989,7 +1018,6 @@
   <p class="cover-tap">toque para começar</p>
 </div>
 
-<!-- TELA 1 -->
 <div class="stage screen" id="screen-1">
   <div class="progress-dots">
     <div class="dot show on"></div>
@@ -1007,7 +1035,6 @@
   </div>
 </div>
 
-<!-- TELA 2 -->
 <div class="stage screen" id="screen-2">
   <div class="progress-dots">
     <div class="dot show on"></div>
@@ -1025,7 +1052,6 @@
   </div>
 </div>
 
-<!-- TELA 3 -->
 <div class="stage screen" id="screen-3">
   <div class="progress-dots">
     <div class="dot show on"></div>
@@ -1043,7 +1069,6 @@
   </div>
 </div>
 
-<!-- TELA FINAL -->
 <div class="stage screen final" id="screen-4">
   <div class="progress-dots">
     <div class="dot show on"></div>
@@ -1252,7 +1277,6 @@
     }, {passive:false});
   }
 
-  // ===== CHUVA DE CORAÇÕES COMO PARTÍCULAS (CORRIGIDO PARA CAIR DE VERDADE) =====
   function criarCoracao() {
     const coracao = document.createElement('div');
     coracao.className = 'cair-coracao';
@@ -1262,7 +1286,6 @@
     
     coracao.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
     
-    // Espalha os corações pela tela, evitando que fiquem presos no topo
     coracao.style.top = (-Math.random() * 100) + 'vh'; 
     coracao.style.left = Math.random() * 100 + 'vw';
     
@@ -1271,7 +1294,7 @@
     
     const duracao = (3 + Math.random() * 4) + 's';
     coracao.style.animationDuration = duracao;
-    coracao.style.animationDelay = (Math.random() * 2) + 's'; // Pequeno atraso para não sobrecarregar
+    coracao.style.animationDelay = (Math.random() * 2) + 's';
 
     document.body.appendChild(coracao);
 
@@ -1282,7 +1305,7 @@
 
   function startCoracoes() {
     if (coracaoInterval) return; 
-    coracaoInterval = setInterval(criarCoracao, 200); // Bem rápido e espalhado
+    coracaoInterval = setInterval(criarCoracao, 200);
   }
 
   function startMusic() {
@@ -1322,7 +1345,6 @@
   for(let i=0;i<14;i++){ setTimeout(spawnPetal, i*300); }
   setInterval(spawnPetal, 650);
 
-  // ===== NEVE DE BOLINHAS BRANCAS E ROSAS =====
   const coresNeve = ['#ffffff', '#ffb6c1'];
   
   function criarBolinhaNeve() {
@@ -1364,7 +1386,6 @@
   makeNoDodge('no-2','row-2');
   makeNoDodge('no-3','row-3');
 
-  // ===== EFEITO ROMÂNTICO AO CLICAR NO ÚLTIMO "SIM" =====
   let finalRomanticTimer = null;
   let finalRomanticActive = false;
 
@@ -1391,14 +1412,12 @@
 
     const rect = card.getBoundingClientRect();
     const simbolos = ['💗','💖','💕','💞','💘','✨','✦','♡'];
-    const quantidade = 58;
+    const quantidade = 63;
 
-    // Enquanto este ciclo de emojis estiver aparecendo, o fundo pulsa rosa <-> azul.
     if(aura) aura.classList.add('final-color-pulse');
 
     for(let i = 0; i < quantidade; i++){
       setTimeout(() => {
-        // Se o usuário sair da tela final durante a animação, não cria mais partículas.
         if(!finalRomanticActive || !document.getElementById('screen-4').classList.contains('active')) return;
 
         const p = document.createElement('div');
@@ -1415,25 +1434,20 @@
           : (0.9 + Math.random() * 1.05);
         p.style.fontSize = tamanho + 'rem';
 
-        // Distribuição ao redor do cartão, com bastante espaço do conteúdo central.
         const lado = Math.floor(Math.random() * 4);
-        const margem = 75 + Math.random() * 90;
+        const margem = 15 + Math.random() * 30;
         let x, y;
 
         if(lado === 0){
-          // esquerda
           x = rect.left - margem;
           y = rect.top + 20 + Math.random() * Math.max(30, rect.height - 40);
         } else if(lado === 1){
-          // direita
           x = rect.right + margem;
           y = rect.top + 20 + Math.random() * Math.max(30, rect.height - 40);
         } else if(lado === 2){
-          // topo
           x = rect.left + 15 + Math.random() * Math.max(30, rect.width - 30);
           y = rect.top - margem;
         } else {
-          // base
           x = rect.left + 15 + Math.random() * Math.max(30, rect.width - 30);
           y = rect.bottom + margem;
         }
@@ -1441,31 +1455,29 @@
         p.style.left = x + 'px';
         p.style.top = y + 'px';
 
-        const direcao = (Math.random() * 46 - 23);
+        const direcao = (Math.random() * 30 - 15);
         p.style.setProperty('--sway1', direcao.toFixed(0) + 'px');
-        p.style.setProperty('--sway2', (direcao * 1.5 + (Math.random() * 34 - 17)).toFixed(0) + 'px');
-        p.style.setProperty('--sway3', (direcao * 2 + (Math.random() * 46 - 23)).toFixed(0) + 'px');
+        p.style.setProperty('--sway2', (direcao * 1.5 + (Math.random() * 20 - 10)).toFixed(0) + 'px');
+        p.style.setProperty('--sway3', (direcao * 2 + (Math.random() * 30 - 15)).toFixed(0) + 'px');
 
-        p.style.setProperty('--rot1', (Math.random() * 100 - 50).toFixed(0) + 'deg');
-        p.style.setProperty('--rot2', (Math.random() * 220 - 110).toFixed(0) + 'deg');
-        p.style.setProperty('--rot3', (Math.random() * 340 - 170).toFixed(0) + 'deg');
+        p.style.setProperty('--rot1', (Math.random() * 80 - 40).toFixed(0) + 'deg');
+        p.style.setProperty('--rot2', (Math.random() * 180 - 90).toFixed(0) + 'deg');
+        p.style.setProperty('--rot3', (Math.random() * 280 - 140).toFixed(0) + 'deg');
 
-        // Cada emoji permanece visível por bastante tempo.
-        const duracao = 8 + Math.random() * 3;
+        const duracao = 5.5 + Math.random() * 2.5;
         p.style.animationDuration = duracao + 's';
 
         document.body.appendChild(p);
         setTimeout(() => p.remove(), (duracao + 0.5) * 1000);
-      }, i * 115);
+      }, i * 75);
     }
 
-    // Quando este grupo terminar de cair, o próximo reaparece novamente.
     clearTimeout(finalRomanticTimer);
     finalRomanticTimer = setTimeout(() => {
       if(finalRomanticActive && document.getElementById('screen-4').classList.contains('active')){
         criarChuvaAoRedorDoCartao();
       }
-    }, 17800);
+    }, 11000);
   }
 
   function pararEfeitoRomanticoFinal(){
@@ -1489,10 +1501,10 @@
     setTimeout(() => animateDots('screen-'+n), 100);
 
     if(n===4){
-      startCoracoes(); // Mantém a chuva geral de corações da tela final
+      startCoracoes();
       startMusic();
       celebrate();
-      iniciarEfeitoRomanticoFinal(); // Emojis ao redor do cartão + fundo rosa/azul
+      iniciarEfeitoRomanticoFinal();
     } else {
       pararEfeitoRomanticoFinal();
     }
