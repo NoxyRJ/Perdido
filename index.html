@@ -59,6 +59,33 @@
     100%{ filter:hue-rotate(8deg) brightness(1.08); }
   }
 
+  /* Pisca rosa <-> azul somente durante a chuva romântica da tela final. */
+  .aura.final-color-pulse{
+    animation: finalColorPulse 2.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes finalColorPulse{
+    0%{
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,70,135,0.52), transparent 43%),
+        radial-gradient(circle at 82% 18%, rgba(90,140,255,0.18), transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(201,100,255,0.24), transparent 50%),
+        var(--black);
+      filter: brightness(1.04) saturate(1.15);
+    }
+    50%{
+      filter: brightness(1.10) saturate(1.2);
+    }
+    100%{
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,90,160,0.18), transparent 43%),
+        radial-gradient(circle at 82% 18%, rgba(70,150,255,0.52), transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(100,170,255,0.25), transparent 50%),
+        var(--black);
+      filter: brightness(1.08) saturate(1.2);
+    }
+  }
+
   .dim-layer{
     position:fixed;
     inset:0;
@@ -705,6 +732,95 @@
     display: inline-block;
   }
 
+  /* ===== EFEITO ROMÂNTICO AO CONFIRMAR O ÚLTIMO "SIM" ===== */
+  .btn-yes.last-yes {
+    position: relative;
+    overflow: visible;
+    isolation: isolate;
+    animation: lastYesGlow 2s ease-in-out infinite;
+  }
+
+  .btn-yes.last-yes::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border-radius: inherit;
+    border: 1px solid rgba(255,179,205,0.65);
+    box-shadow:
+      0 0 0 0 rgba(255,111,160,0.45),
+      0 0 28px rgba(255,111,160,0.35);
+    animation: lastYesRing 2s ease-out infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .btn-yes.last-yes.clicked {
+    animation: lastYesClick .65s cubic-bezier(.2,.9,.3,1.2) forwards;
+  }
+
+  .btn-yes.last-yes.clicked::before {
+    animation: lastYesBurst .8s ease-out forwards;
+  }
+
+  @keyframes lastYesGlow {
+    0%,100% { box-shadow: 0 12px 30px rgba(255,111,160,0.25), 0 0 0 rgba(255,179,205,0); }
+    50% { box-shadow: 0 14px 38px rgba(255,111,160,0.42), 0 0 24px rgba(255,179,205,0.18); }
+  }
+
+  @keyframes lastYesRing {
+    0% { transform: scale(.96); opacity: .15; }
+    55% { transform: scale(1.08); opacity: .75; }
+    100% { transform: scale(1.16); opacity: 0; }
+  }
+
+  @keyframes lastYesClick {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.12); }
+    65% { transform: scale(.98); }
+    100% { transform: scale(1.04); }
+  }
+
+  @keyframes lastYesBurst {
+    0% { transform: scale(.9); opacity: .8; }
+    100% { transform: scale(1.55); opacity: 0; }
+  }
+
+  /* Corações exclusivos da tela final: bem afastados e distribuídos ao redor do cartão. */
+  .final-romantic-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    user-select: none;
+    will-change: transform, opacity;
+    text-shadow: 0 0 14px rgba(255,111,160,0.8);
+    animation: finalAroundFall linear forwards;
+  }
+
+  .final-romantic-particle.spark {
+    font-size: 10px !important;
+    text-shadow: 0 0 12px rgba(255,255,255,0.95);
+  }
+
+  @keyframes finalAroundFall {
+    0% {
+      transform: translate3d(0,-12px,0) rotate(0deg) scale(.65);
+      opacity: 0;
+    }
+    8% { opacity: 1; }
+    30% {
+      transform: translate3d(var(--sway1), 35px, 0) rotate(var(--rot1)) scale(1);
+      opacity: 1;
+    }
+    65% {
+      transform: translate3d(var(--sway2), 95px, 0) rotate(var(--rot2)) scale(.94);
+      opacity: .9;
+    }
+    100% {
+      transform: translate3d(var(--sway3), 155px, 0) rotate(var(--rot3)) scale(.78);
+      opacity: 0;
+    }
+  }
+
   #audioPlayer {
     position: fixed;
     bottom: -100px;
@@ -922,7 +1038,7 @@
   <h1>de verdade, verdade?</h1>
   <p class="sub">porque eu quero guardar esse momento com carinho, sabendo que esse "sim" é de verdade — e que a partir daqui é você e eu, escrevendo essa história com calma.</p>
   <div class="btn-row" id="row-3">
-    <button class="btn-yes" onclick="goTo(4)">de verdade</button>
+    <button class="btn-yes last-yes" id="lastYes" onclick="ultimoSim(this)">de verdade</button>
     <button class="btn-no" id="no-3" data-screen="3">não</button>
   </div>
 </div>
@@ -1248,6 +1364,119 @@
   makeNoDodge('no-2','row-2');
   makeNoDodge('no-3','row-3');
 
+  // ===== EFEITO ROMÂNTICO AO CLICAR NO ÚLTIMO "SIM" =====
+  let finalRomanticTimer = null;
+  let finalRomanticActive = false;
+
+  function ultimoSim(button){
+    if(button.dataset.animando === '1') return;
+    button.dataset.animando = '1';
+    button.classList.add('clicked');
+
+    setTimeout(() => {
+      goTo(4);
+    }, 520);
+  }
+
+  function iniciarEfeitoRomanticoFinal(){
+    if(finalRomanticActive) return;
+    finalRomanticActive = true;
+    criarChuvaAoRedorDoCartao();
+  }
+
+  function criarChuvaAoRedorDoCartao(){
+    const card = document.getElementById('screen-4');
+    const aura = document.querySelector('.aura');
+    if(!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const simbolos = ['💗','💖','💕','💞','💘','✨','✦','♡'];
+    const quantidade = 58;
+
+    // Enquanto este ciclo de emojis estiver aparecendo, o fundo pulsa rosa <-> azul.
+    if(aura) aura.classList.add('final-color-pulse');
+
+    for(let i = 0; i < quantidade; i++){
+      setTimeout(() => {
+        // Se o usuário sair da tela final durante a animação, não cria mais partículas.
+        if(!finalRomanticActive || !document.getElementById('screen-4').classList.contains('active')) return;
+
+        const p = document.createElement('div');
+        p.className = 'final-romantic-particle';
+
+        const simbolo = simbolos[Math.floor(Math.random() * simbolos.length)];
+        p.textContent = simbolo;
+
+        const isSpark = simbolo === '✨' || simbolo === '✦';
+        p.classList.toggle('spark', isSpark);
+
+        const tamanho = isSpark
+          ? (0.55 + Math.random() * 0.45)
+          : (0.9 + Math.random() * 1.05);
+        p.style.fontSize = tamanho + 'rem';
+
+        // Distribuição ao redor do cartão, com bastante espaço do conteúdo central.
+        const lado = Math.floor(Math.random() * 4);
+        const margem = 75 + Math.random() * 90;
+        let x, y;
+
+        if(lado === 0){
+          // esquerda
+          x = rect.left - margem;
+          y = rect.top + 20 + Math.random() * Math.max(30, rect.height - 40);
+        } else if(lado === 1){
+          // direita
+          x = rect.right + margem;
+          y = rect.top + 20 + Math.random() * Math.max(30, rect.height - 40);
+        } else if(lado === 2){
+          // topo
+          x = rect.left + 15 + Math.random() * Math.max(30, rect.width - 30);
+          y = rect.top - margem;
+        } else {
+          // base
+          x = rect.left + 15 + Math.random() * Math.max(30, rect.width - 30);
+          y = rect.bottom + margem;
+        }
+
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+
+        const direcao = (Math.random() * 46 - 23);
+        p.style.setProperty('--sway1', direcao.toFixed(0) + 'px');
+        p.style.setProperty('--sway2', (direcao * 1.5 + (Math.random() * 34 - 17)).toFixed(0) + 'px');
+        p.style.setProperty('--sway3', (direcao * 2 + (Math.random() * 46 - 23)).toFixed(0) + 'px');
+
+        p.style.setProperty('--rot1', (Math.random() * 100 - 50).toFixed(0) + 'deg');
+        p.style.setProperty('--rot2', (Math.random() * 220 - 110).toFixed(0) + 'deg');
+        p.style.setProperty('--rot3', (Math.random() * 340 - 170).toFixed(0) + 'deg');
+
+        // Cada emoji permanece visível por bastante tempo.
+        const duracao = 8 + Math.random() * 3;
+        p.style.animationDuration = duracao + 's';
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), (duracao + 0.5) * 1000);
+      }, i * 115);
+    }
+
+    // Quando este grupo terminar de cair, o próximo reaparece novamente.
+    clearTimeout(finalRomanticTimer);
+    finalRomanticTimer = setTimeout(() => {
+      if(finalRomanticActive && document.getElementById('screen-4').classList.contains('active')){
+        criarChuvaAoRedorDoCartao();
+      }
+    }, 17800);
+  }
+
+  function pararEfeitoRomanticoFinal(){
+    finalRomanticActive = false;
+    clearTimeout(finalRomanticTimer);
+    finalRomanticTimer = null;
+    const aura = document.querySelector('.aura');
+    if(aura) aura.classList.remove('final-color-pulse');
+    document.querySelectorAll('.final-romantic-particle').forEach(p => p.remove());
+  }
+
   function goTo(n){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     const targetScreen = document.getElementById('screen-'+n);
@@ -1260,9 +1489,12 @@
     setTimeout(() => animateDots('screen-'+n), 100);
 
     if(n===4){
-      startCoracoes(); // Ativa a chuva de corações IMEDIATAMENTE
+      startCoracoes(); // Mantém a chuva geral de corações da tela final
       startMusic();
       celebrate();
+      iniciarEfeitoRomanticoFinal(); // Emojis ao redor do cartão + fundo rosa/azul
+    } else {
+      pararEfeitoRomanticoFinal();
     }
   }
 
