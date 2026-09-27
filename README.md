@@ -22,6 +22,8 @@ Página web interativa criada para um pedido de namoro, feita em HTML, CSS e Jav
 
 Basta abrir o arquivo `index.html` em qualquer navegador — não precisa de servidor nem instalação.
 
+Ou basta clicar no link `noxyrj.github.io/Perdido/`
+
 ## 📄 Licença
 
 Projeto pessoal, feito com carinho. Sinta-se livre para se inspirar, mas troque os textos antes de usar (:
