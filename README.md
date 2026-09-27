@@ -22,7 +22,7 @@ Página web interativa criada para um pedido de namoro, feita em HTML, CSS e Jav
 
 Basta abrir o arquivo `index.html` em qualquer navegador — não precisa de servidor nem instalação.
 
-Ou basta clicar no link (https://noxyrj.github.io/Perdido/)
+Ou basta clicar no link (https://lovekel.netlify.app)
 
 ## 📄 Licença
 
